@@ -1,0 +1,31 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Firebase (configuración local)
+.firebaserc
+firebase.json
+firebase-config.js
+config.js
+
+# Herramientas de migración y debugging (legacy)
+migrate.html
+migrate.js
+check-avatar.html
+clean-storage.html
+test-admin.html
+storage.rules
+
+# Scripts legacy redundantes
+vimeo-importer.js
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

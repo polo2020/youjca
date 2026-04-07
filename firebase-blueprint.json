@@ -1,0 +1,98 @@
+{
+  "entities": {
+    "Admin": {
+      "title": "Admin",
+      "description": "Defines who is an admin by UID.",
+      "type": "object",
+      "properties": {
+        "role": { "type": "string", "description": "The role of the user, e.g., 'admin'." }
+      },
+      "required": ["role"]
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile information.",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "avatar": { "type": "string", "description": "URL to the user's avatar." },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "role": { "type": "string", "enum": ["user", "admin"] }
+      },
+      "required": ["email", "createdAt"]
+    },
+    "Video": {
+      "title": "Video",
+      "description": "A video imported from Vimeo or added manually.",
+      "type": "object",
+      "properties": {
+        "vimeoId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "thumbnail": { "type": "string" },
+        "duration": { "type": "string" },
+        "category": { "type": "string" },
+        "author": { "type": "string" },
+        "authorAvatar": { "type": "string" },
+        "uploadDate": { "type": "string", "format": "date-time" },
+        "url": { "type": "string" },
+        "embedUrl": { "type": "string" },
+        "views": { "type": "number" },
+        "likes": { "type": "number" },
+        "importedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "vimeoId", "embedUrl"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "A comment on a video.",
+      "type": "object",
+      "properties": {
+        "videoId": { "type": "string" },
+        "userId": { "type": "string" },
+        "text": { "type": "string" },
+        "userName": { "type": "string" },
+        "userAvatar": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "likes": { "type": "number" }
+      },
+      "required": ["videoId", "userId", "text", "createdAt"]
+    },
+    "Favorite": {
+      "title": "Favorite",
+      "description": "A user's favorite video.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "videoId": { "type": "string" },
+        "videoTitle": { "type": "string" },
+        "addedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "videoId", "addedAt"]
+    },
+    "History": {
+      "title": "History",
+      "description": "A record of a video watched by a user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "videoId": { "type": "string" },
+        "videoTitle": { "type": "string" },
+        "watchedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "videoId", "watchedAt"]
+    }
+  },
+  "firestore": {
+    "/admins/{userId}": { "schema": "Admin", "description": "Admin users by UID." },
+    "/users/{userId}": { "schema": "User", "description": "User profiles." },
+    "/allUsersList/{userId}": { "schema": "User", "description": "Mirrored user list for admin management." },
+    "/videos/{videoId}": { "schema": "Video", "description": "Collection of tech videos." },
+    "/comments/{commentId}": { "schema": "Comment", "description": "Video comments." },
+    "/favorites/{favoriteId}": { "schema": "Favorite", "description": "User favorites." },
+    "/history/{historyId}": { "schema": "History", "description": "Watch history." },
+    "/stats/counts": { "schema": { "type": "object", "properties": { "totalUsers": { "type": "number" } } }, "description": "Global statistics." },
+    "/settings/creator": { "schema": { "type": "object", "properties": { "avatarUrl": { "type": "string" }, "updatedAt": { "type": "string", "format": "date-time" } } }, "description": "Creator settings." }
+  }
+}

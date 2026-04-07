@@ -1,0 +1,64 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Colección stats: solo admin lee y escribe
+    match /stats/{document} {
+      allow read, write: if request.auth != null && request.auth.token.email == 'jcristojean2020@gmail.com';
+    }
+
+    // Colección settings: solo admin lee y escribe
+    match /settings/{document} {
+      allow read, write: if request.auth != null && request.auth.token.email == 'jcristojean2020@gmail.com';
+    }
+
+    // Colección videos: todos leen, solo admin escribe
+    match /videos/{document} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.email == 'jcristojean2020@gmail.com';
+    }
+
+    // Colección allUsersList: admin lee TODO, autenticados pueden leer para estadísticas
+    match /allUsersList/{document=**} {
+      allow read: if request.auth != null;  // Cualquier autenticado puede leer (para stats)
+      allow write: if request.auth != null &&
+        (request.auth.token.email == 'jcristojean2020@gmail.com' || request.auth.uid == request.resource.data.uid);
+      allow delete: if request.auth != null && request.auth.token.email == 'jcristojean2020@gmail.com';
+    }
+
+    // Colección comments: todos leen, autenticados crean (solo sus comentarios), admin elimina
+    match /comments/{document} {
+      allow read: if true;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || request.auth.token.email == 'jcristojean2020@gmail.com');
+    }
+
+    // Colección favorites: solo dueño o admin leen/escriben
+    match /favorites/{document} {
+      allow read: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || request.auth.token.email == 'jcristojean2020@gmail.com');
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || request.auth.token.email == 'jcristojean2020@gmail.com');
+    }
+
+    // Colección history: solo dueño o admin leen/escriben
+    match /history/{document} {
+      allow read: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || request.auth.token.email == 'jcristojean2020@gmail.com');
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || request.auth.token.email == 'jcristojean2020@gmail.com');
+    }
+
+    // Colección users: admin lee TODO, dueño lee/escribe el suyo
+    match /users/{userId} {
+      allow read: if request.auth != null && 
+        (request.auth.token.email == 'jcristojean2020@gmail.com' || request.auth.uid == userId);
+      allow write: if request.auth != null && 
+        (request.auth.token.email == 'jcristojean2020@gmail.com' || request.auth.uid == userId);
+      allow delete: if request.auth != null && request.auth.token.email == 'jcristojean2020@gmail.com';
+    }
+  }
+}
